@@ -40,6 +40,15 @@ class AgentListTableVC: UIViewController {
         agents.append(contentsOf: [ethan, jim, claire, eugene, franz, luther, sarah, max, hannah, jack, frank])
     }
 
+    func compromisedCount() -> Int {
+        var compCount = 0
+        for agent in agents {
+            if agent.compromised {
+                compCount += 1
+            }
+        }
+        return compCount
+    }
 }
 
 extension AgentListTableVC: UITableViewDataSource {
@@ -53,13 +62,32 @@ extension AgentListTableVC: UITableViewDataSource {
         cell.textLabel?.text = agent.realName
         cell.detailTextLabel?.text = agent.coverName
         
+        if agent.compromised {
+            cell.backgroundColor = UIColor(hue: 0, saturation: 0.8, brightness: 0.9, alpha: 1.0)
+        } else {
+            cell.backgroundColor = .white
+        }
+        
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+        return "\(compromisedCount()) Agents have been compromised!"
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "ToAgentDetailVCSegue" {
+            guard let agentDetailVC = segue.destination as? AgentDetailVC,
+            let selectedIndexPath = tableView.indexPathForSelectedRow else { return }
+            agentDetailVC.agent = agents[selectedIndexPath.row]
+            
+            
+        }
     }
     
     
 }
 
 extension AgentListTableVC: UITableViewDelegate {
-    
     
 }
